@@ -47,6 +47,10 @@ df_tableau.to_tableau('example.tde')
 
 ```
 
+## Next Steps
+
+I plan on adding DataFrame to .hyper functionality in the next release for Tableau 10.5.
+
 ## Authors
 
 * **Benjamin Wiley** - [jamin4lyfe](https://github.com/bwiley1)
