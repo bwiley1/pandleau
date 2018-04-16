@@ -11,8 +11,7 @@ setup(name='pandleau',
       author='Benjamin Wiley',
       author_email='bewi7122@colorado.edu',
       url='https://github.com/bwiley1/pandleau',
-      download_url='https://github.com/bwiley1/pandleau/archive/1.0.0.tar.gz',
+      download_url='https://github.com/bwiley1/pandleau/dist/pandleau-0.1.dev0.tar.gz',
       py_modules=['pandleau'],
       keywords='tableau pandas extract tde',
-      classifiers=['Programming Language :: Python',
-                   'Topic :: Software Development :: Libraries :: Python Modules'])
+      classifiers=['Programming Language :: Python'])
