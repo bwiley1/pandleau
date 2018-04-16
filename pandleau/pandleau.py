@@ -192,7 +192,6 @@ class pandleau( object ):
                         new_row.setBoolean(i, 
                                            self._dataframe.iloc[j, i])
                     elif self._column_panda_types[i] == 'datetime64':
-#                        print(str(i) + ' ' + str(j))
                         new_row.setDateTime(i,
                                             self._dataframe.iloc[j, i].year,
                                             self._dataframe.iloc[j, i].month,
