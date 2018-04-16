@@ -10,9 +10,9 @@ You'll need to install tableauSDK directly from Tableau's site: https://onlinehe
 
 ### Installing
 
-Once installing tableauSDK is done, download this repository, navigate to your downloads file and run the following in cmd:  
+The easiest way to install this module is with ```pip```: 
 ```bash
-python -m setup.py install
+python -m pip install pandleau
 ```
 
 ## Example
