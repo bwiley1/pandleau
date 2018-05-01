@@ -1,6 +1,6 @@
 # pandleau
 
-A quick and easy way to convert a Pandas DataFrame to a Tableau extract.
+A quick and easy way to convert a Pandas DataFrame to a Tableau .hyper extract.
 
 ## Getting Started
 
@@ -40,10 +40,10 @@ example_df.loc[:, 'SpatialDest'] = example_df['LatDest'].apply( lambda x: "POINT
 df_tableau = pandleau(example_df)
 
 # Define spatial column
-df_tableau.set_spatial('SpatialDest')
+df_tableau.set_spatial('SpatialDest', indicator=True)
 
 # Write .tde Extract!
-df_tableau.to_tableau('example.tde')
+df_tableau.to_tableau('test.hyper', add_index=False)
 
 ```
 
