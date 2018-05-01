@@ -4,7 +4,7 @@ A quick and easy way to convert a Pandas DataFrame to a Tableau .hyper extract.
 
 ## Getting Started
 
-### Prerequites
+### Prerequisites
 
 You'll need to install tableauSDK directly from Tableau's site: https://onlinehelp.tableau.com/current/api/extract_api/en-us/help.htm#Extract/extract_api_installing.htm%3FTocPath%3D_____3 . 
 
@@ -19,7 +19,7 @@ You can also install pandleau using pip:
 ```bash
 pip install pandleau
 ```
-But note that this will throw a warning to install tableausdk using the above link.
+But note that this will throw a warning to install tableausdk using the above link in Prerequisites.
 
 ## Example
 
