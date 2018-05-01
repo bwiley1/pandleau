@@ -15,6 +15,12 @@ Once installing tableauSDK is done, download this repository, navigate to your d
 python -m setup.py install
 ```
 
+You can also install pandleau using pip:
+```bash
+pip install pandleau
+```
+But note that this will throw a warning to install tableausdk using the above link.
+
 ## Example
 
 I grabbed the following Brazil flights data off of kaggle for this example: https://www.kaggle.com/microtang/exploring-brazil-flights-data/data.
