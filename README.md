@@ -10,9 +10,9 @@ You'll need to install tableauSDK directly from Tableau's site: https://onlinehe
 
 ### Installing
 
-The easiest way to install this module is with ```pip```: 
+Once installing tableauSDK is done, download this repository, navigate to your downloads file and run the following in cmd:  
 ```bash
-python -m pip install pandleau
+python -m setup.py install
 ```
 
 ## Example
@@ -46,10 +46,6 @@ df_tableau.set_spatial('SpatialDest')
 df_tableau.to_tableau('example.tde')
 
 ```
-
-## Next Steps
-
-I plan on adding DataFrame to .hyper functionality in the next release for Tableau 10.5.
 
 ## Authors
 

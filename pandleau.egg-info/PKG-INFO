@@ -1,12 +1,12 @@
 Metadata-Version: 1.1
 Name: pandleau
-Version: 0.1.dev0
+Version: 0.2
 Summary: A quick and easy way to convert a Pandas DataFrame to a Tableau extract.
 Home-page: https://github.com/bwiley1/pandleau
 Author: Benjamin Wiley
 Author-email: bewi7122@colorado.edu
 License: MIT
-Download-URL: https://github.com/bwiley1/pandleau/archive/1.0.0.tar.gz
+Download-URL: https://github.com/bwiley1/pandleau/dist/pandleau-0.2.tar.gz
 Description-Content-Type: UNKNOWN
 Description: # pandleau
         
@@ -68,4 +68,3 @@ Description: # pandleau
 Keywords: tableau pandas extract tde
 Platform: UNKNOWN
 Classifier: Programming Language :: Python
-Classifier: Topic :: Software Development :: Libraries :: Python Modules
