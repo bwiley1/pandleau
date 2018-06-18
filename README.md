@@ -1,16 +1,18 @@
 # pandleau
 
-A quick and easy way to convert a Pandas DataFrame to a Tableau .hyper extract.
+A quick and easy way to convert a Pandas DataFrame to a Tableau .tde or .hyper extract.
 
 ## Getting Started
 
 ### Prerequisites
 
-You'll need to install tableauSDK directly from Tableau's site: https://onlinehelp.tableau.com/current/api/extract_api/en-us/help.htm#Extract/extract_api_installing.htm%3FTocPath%3D_____3 . 
+ - If you want to output as a .tde format, you'll need to install TableauSDK directly from Tableau's site: https://onlinehelp.tableau.com/current/api/sdk/en-us/help.htm#SDK/tableau_sdk_installing.htm%3FTocPath%3D_____3 . 
+  - If you want to output as a .hyper format, you'll need to install Extract API 2.0 directly from Tableau's site: https://onlinehelp.tableau.com/current/api/extract_api/en-us/help.htm#Extract/extract_api_installing.htm%3FTocPath%3D_____3 . 
+  - Although Tableau's site claims Python 3 is not supported, this module is tested to work fully functional on Python 3.6
 
 ### Installing
 
-Once installing tableauSDK is done, download this repository, navigate to your downloads file and run the following in cmd:  
+Once installing TableauSDK is done, download this repository, navigate to your downloads file and run the following in cmd:  
 ```bash
 python -m setup.py install
 ```
@@ -27,7 +29,7 @@ I grabbed the following Brazil flights data off of kaggle for this example: http
 
 ```python
 import pandas as pd
-from pandleau import *
+from pandleau import pandleau
 
 # Import the data
 example_df = pd.read_csv(r'example/BrFlights2.csv', encoding = 'iso-8859-1')
@@ -48,7 +50,7 @@ df_tableau = pandleau(example_df)
 # Define spatial column
 df_tableau.set_spatial('SpatialDest', indicator=True)
 
-# Write .tde Extract!
+# Write .tde or .hyper Extract!
 df_tableau.to_tableau('test.hyper', add_index=False)
 
 ```
@@ -56,6 +58,7 @@ df_tableau.to_tableau('test.hyper', add_index=False)
 ## Authors
 
 * **Benjamin Wiley** - [jamin4lyfe](https://github.com/bwiley1)
+* **Zhirui(Jerry) Wang**  - [zhiruiwang](https://github.com/zhiruiwang)
 
 ## License
 

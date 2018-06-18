@@ -1,1 +1,1 @@
-from . import pandleau
+from pandleau.pandleau import *

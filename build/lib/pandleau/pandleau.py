@@ -2,14 +2,23 @@
 """
 
 
-@author: jamin
+@author: jamin, zhiruiwang
 """
 
+from __future__ import print_function
 import pandas
 import numpy
 from tableausdk import *
-from tableausdk.HyperExtract import *
-
+try:
+	from tableausdk.Extract import *
+	print("You are using the Tableau SDK, please save the output as .tde format")
+except:
+	pass
+try:
+	from tableausdk.HyperExtract import *
+	print("You are using the Extract API 2.0, please save the output as .hyper format")
+except:
+	pass
 
 class pandleau( object ):
     '''
@@ -24,48 +33,27 @@ class pandleau( object ):
             @param column is dataframe column
             
             '''
-            if pandas.api.types.infer_dtype(column) == 'string':
-                return Type.UNICODE_STRING 
-            elif pandas.api.types.infer_dtype(column) == 'unicode':
-                return Type.UNICODE_STRING 
-            elif pandas.api.types.infer_dtype(column) == 'bytes':
-                return Type.BOOLEAN 
-            elif pandas.api.types.infer_dtype(column) == 'floating':
-                return Type.DOUBLE 
-            elif pandas.api.types.infer_dtype(column) == 'integer':
-                return Type.INTEGER 
-            elif pandas.api.types.infer_dtype(column) == 'mixed-integer':
-                # integers with non-integers
-                return Type.DOUBLE 
-            elif pandas.api.types.infer_dtype(column) == 'mixed-integer-float':
-                # floats and integers
-                return Type.DOUBLE 
-            elif pandas.api.types.infer_dtype(column) == 'decimal':
-                return Type.DOUBLE 
-            elif pandas.api.types.infer_dtype(column) == 'complex':
-                # No complex set type
-                return Type.UNICODE_STRING  
-            elif pandas.api.types.infer_dtype(column) == 'categorical':
-                return Type.CHAR_STRING 
-            elif pandas.api.types.infer_dtype(column) == 'boolean':
-                return Type.BOOLEAN 
-            elif pandas.api.types.infer_dtype(column) == 'datetime64':
-                return Type.DATETIME 
-            elif pandas.api.types.infer_dtype(column) == 'datetime':
-                return Type.DATETIME 
-            elif pandas.api.types.infer_dtype(column) == 'date':
-                return Type.DATE 
-            elif pandas.api.types.infer_dtype(column) == 'timedelta64':
-                return Type.DATETIME 
-            elif pandas.api.types.infer_dtype(column) == 'timedelta':
-                return Type.DATETIME 
-            elif pandas.api.types.infer_dtype(column) == 'time':
-                return Type.DATETIME 
-            elif pandas.api.types.infer_dtype(column) == 'period':
-                return Type.DURATION 
-            elif pandas.api.types.infer_dtype(column) == 'mixed': 
-                return Type.UNICODE_STRING 
-            else:
+            mapper = {'string':Type.UNICODE_STRING,
+                      'bytes':Type.BOOLEAN,
+                      'floating':Type.DOUBLE,
+                      'integer':Type.INTEGER,
+                      'mixed-integer':Type.DOUBLE, # integers with non-integers
+                      'mixed-integer-float':Type.DOUBLE,# floats and integers
+                      'decimal':Type.DOUBLE,
+                      'complex':Type.UNICODE_STRING,# No complex set type
+                      'categorical':Type.CHAR_STRING,
+                      'boolean':Type.BOOLEAN,
+                      'datetime64':Type.DATETIME,
+                      'datetime': Type.DATETIME,
+                      'date': Type.DATE,
+                      'timedelta64':Type.DATETIME,
+                      'timedelta':Type.DATETIME,
+                      'time':Type.DATETIME,
+                      'period':Type.DURATION,
+                      'mixed':Type.UNICODE_STRING}
+            try:
+            	return mapper[pandas.api.types.infer_dtype(column.dropna())]
+            except:
                 raise Exception('Error: Unknown pandas to Tableau data type.')
     
     @classmethod 
@@ -77,7 +65,7 @@ class pandleau( object ):
         self._column_names = list(self._dataframe.columns)
         
         # Iniital column types
-        self._column_static_type = self._dataframe.apply(lambda x: pandleau.data_static_type(x), axis = 0 )
+        self._column_static_type = self._dataframe.apply(lambda x: pandleau.data_static_type(x), axis = 0)
 
 
     def set_spatial(self, column_index, indicator = True):
@@ -113,6 +101,12 @@ class pandleau( object ):
         
         '''
         
+        # Delete Extract and debug log is already exist
+        for file in [path, os.path.dirname(path) + '/debug.log',
+        			'./DataExtract.log','./TableauSDKExtract.log','./debug.log']:
+        	if os.path.isfile(file):
+        		os.remove(file)
+
         # Create Extract and Table
         ExtractAPI.initialize( )
         new_extract = Extract( path )
@@ -133,6 +127,7 @@ class pandleau( object ):
         
         # Close extract
         new_extract.close()
+        ExtractAPI.cleanup()
     
     
     def set_column_values( self, tableau_table, extract_table, add_index ):
