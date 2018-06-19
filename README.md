@@ -41,8 +41,8 @@ example_df['Chegada.Prevista'] = pd.to_datetime(example_df['Chegada.Prevista'], 
 example_df['Chegada.Real'] = pd.to_datetime(example_df['Chegada.Real'], format = '%Y-%m-%d')
 
 # Set up a spatial column
-example_df.loc[:, 'SpatialDest'] = example_df['LatDest'].apply( lambda x: "POINT (" + str( round(x, 6) ) ) + \
-	example_df['LongDest'].apply( lambda x: " "+str( round(x, 6) ) + ")" )
+example_df.loc[:, 'SpatialDest'] = example_df['LongDest'].apply( lambda x: "POINT (" + str( round(x, 6) ) ) + \
+	example_df['LatDest'].apply( lambda x: " "+str( round(x, 6) ) + ")" )
 
 # Change to pandleau object
 df_tableau = pandleau(example_df)
@@ -59,6 +59,10 @@ df_tableau.to_tableau('test.hyper', add_index=False)
 
 * **Benjamin Wiley** - [jamin4lyfe](https://github.com/bwiley1)
 * **Zhirui(Jerry) Wang**  - [zhiruiwang](https://github.com/zhiruiwang)
+
+## Related Project
+
+[RTableau](https://github.com/zhiruiwang/RTableau) Convert R data.frame to Tableau Extract using pandleau
 
 ## License
 
