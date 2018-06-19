@@ -29,7 +29,7 @@ I grabbed the following Brazil flights data off of kaggle for this example: http
 
 ```python
 import pandas as pd
-from pandleau import pandleau
+from pandleau import *
 
 # Import the data
 example_df = pd.read_csv(r'example/BrFlights2.csv', encoding = 'iso-8859-1')
