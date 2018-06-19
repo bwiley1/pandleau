@@ -103,7 +103,7 @@ class pandleau( object ):
         
         # Delete Extract and debug log is already exist
         for file in [path, os.path.dirname(path) + '/debug.log',
-        			'./DataExtract.log','./TableauSDKExtract.log','./debug.log']:
+        			'./DataExtract.log','./debug.log']:
         	if os.path.isfile(file):
         		os.remove(file)
 
@@ -116,8 +116,8 @@ class pandleau( object ):
         if add_index:
             table_def.addColumn( 'index', Type.INTEGER )
             
-        for col_index, col_name in enumerate(self._dataframe, 1):
-            table_def.addColumn( col_name, self._column_static_type[col_index-1] )
+        for col_index, col_name in enumerate(self._dataframe):
+            table_def.addColumn( col_name, self._column_static_type[col_index] )
         
         # Create table
         new_table = new_extract.addTable( "Extract", table_def )
@@ -140,14 +140,14 @@ class pandleau( object ):
         
         for row_index in self._dataframe.itertuples():
 
-            for col_index, col_entry in enumerate(row_index, 1):
+            for col_index, col_entry in enumerate(row_index):
                 if add_index:
-                    if col_index == 1:
-                        new_row.setInteger(col_index, int( row_index ) )
-                if col_index != 1:
-                    column_type = self._column_static_type[col_index-2]
+                    if col_index == 0:
+                        new_row.setInteger(col_index, int( col_entry+1 ) )
+                if col_index != 0:
+                    column_type = self._column_static_type[col_index-1]
 #                    print(new_row, (col_index-2), col_entry, column_type)
-                    pandleau.determine_entry_value(new_row, (col_index-2), col_entry, column_type)
+                    pandleau.determine_entry_value(new_row, (col_index+add_index-1), col_entry, column_type)
                 
             tableau_table.insert( new_row )
             
