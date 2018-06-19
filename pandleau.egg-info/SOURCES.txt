@@ -1,4 +1,5 @@
 README.md
+setup.cfg
 setup.py
 pandleau/__init__.py
 pandleau/pandleau.py
