@@ -52,7 +52,11 @@ class pandleau( object ):
                       'period':Type.DURATION,
                       'mixed':Type.UNICODE_STRING}
             try:
-            	return mapper[pandas.api.types.infer_dtype(column.dropna())]
+                # Use pandas api for inferring types for latest versions of pandas, lib method for earlier versions
+                if pandas.__version__ >= '0.21.0':
+            	    return mapper[pandas.api.types.infer_dtype(column.dropna())]
+                else:
+                    return mapper[pandas.lib.infer_dtype(column.dropna())]
             except:
                 raise Exception('Error: Unknown pandas to Tableau data type.')
     
