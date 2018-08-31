@@ -2,18 +2,19 @@
 """
 
 
-@author: jamin, zhiruiwang
+@author: jamin, zhiruiwang, aawiegel
 """
 
 from __future__ import print_function
 import pandas
-import numpy
 from tableausdk import *
+
 try:
 	from tableausdk.Extract import *
 	print("You are using the Tableau SDK, please save the output as .tde format")
 except:
 	pass
+
 try:
 	from tableausdk.HyperExtract import *
 	print("You are using the Extract API 2.0, please save the output as .hyper format")
@@ -52,7 +53,11 @@ class pandleau( object ):
                       'period':Type.DURATION,
                       'mixed':Type.UNICODE_STRING}
             try:
-            	return mapper[pandas.api.types.infer_dtype(column.dropna())]
+                # Use pandas api for inferring types for latest versions of pandas, lib method for earlier versions
+                if pandas.__version__ >= '0.21.0':
+            	    return mapper[pandas.api.types.infer_dtype(column.dropna())]
+                else:
+                    return mapper[pandas.lib.infer_dtype(column.dropna())]
             except:
                 raise Exception('Error: Unknown pandas to Tableau data type.')
     
