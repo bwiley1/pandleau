@@ -59,6 +59,7 @@ df_tableau.to_tableau('test.hyper', add_index=False)
 
 * **Benjamin Wiley** - [jamin4lyfe](https://github.com/bwiley1)
 * **Zhirui(Jerry) Wang**  - [zhiruiwang](https://github.com/zhiruiwang)
+* **Aaron Wiegel** - [aawiegel](https://github.com/aawiegel)
 
 ## Related Project
 
