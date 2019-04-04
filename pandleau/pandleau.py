@@ -8,18 +8,22 @@
 from __future__ import print_function
 import pandas
 from tableausdk import *
+from tqdm import tqdm
 
 try:
 	from tableausdk.Extract import *
+
 	print("You are using the Tableau SDK, please save the output as .tde format")
 except:
 	pass
 
 try:
 	from tableausdk.HyperExtract import *
+
 	print("You are using the Extract API 2.0, please save the output as .hyper format")
 except:
 	pass
+
 
 class pandleau( object ):
     '''
@@ -72,7 +76,6 @@ class pandleau( object ):
         # Iniital column types
         self._column_static_type = self._dataframe.apply(lambda x: pandleau.data_static_type(x), axis = 0)
 
-
     def set_spatial(self, column_index, indicator = True):
         '''
         Allows the user to define a spatial column
@@ -91,14 +94,15 @@ class pandleau( object ):
                 raise Exception ('Error: could not find column in dataframe.')
         else:
             if column_index.__class__.__name__ == 'int':
-                self._column_static_type[column_index] = pandleau.data_static_type(self._dataframe.iloc[:, column_index])
+                self._column_static_type[column_index] = pandleau.data_static_type(
+                    self._dataframe.iloc[:, column_index])
             elif column_index.__class__.__name__ == 'str':
-                self._column_static_type[self._column_names.index(column_index)] = pandleau.data_static_type(self._dataframe.loc[:, column_index])
+                self._column_static_type[self._column_names.index(column_index)] = pandleau.data_static_type(
+                    self._dataframe.loc[:, column_index])
             else:
                 raise Exception ('Error: could not find column in dataframe.')
 
-
-    def to_tableau( self, path, add_index=False ):
+    def to_tableau(self, path, tableName='', add_index=False):
         '''
         Converts a Pandas DataFrame to a Tableau .tde file
         @param path = path to write file
@@ -106,11 +110,14 @@ class pandleau( object ):
         
         '''
         
+        if tableName == '':
+            tableName = 'Extract'
+
         # Delete Extract and debug log is already exist
-        for file in [path, os.path.dirname(path) + '/debug.log',
-        			'./DataExtract.log','./debug.log']:
-        	if os.path.isfile(file):
-        		os.remove(file)
+        # for file in [path, os.path.dirname(path) + '/debug.log',
+        #              './DataExtract.log', './debug.log']:
+        #     if os.path.isfile(file):
+        #         os.remove(file)
 
         # Create Extract and Table
         ExtractAPI.initialize( )
@@ -125,7 +132,7 @@ class pandleau( object ):
             table_def.addColumn( col_name, self._column_static_type[col_index] )
         
         # Create table
-        new_table = new_extract.addTable( "Extract", table_def )
+        new_table = new_extract.addTable(tableName, table_def)
         
         # Set Column values
         self.set_column_values( new_table, table_def, add_index )
@@ -133,7 +140,6 @@ class pandleau( object ):
         # Close extract
         new_extract.close()
         ExtractAPI.cleanup()
-    
     
     def set_column_values( self, tableau_table, extract_table, add_index ):
         '''
@@ -143,7 +149,7 @@ class pandleau( object ):
         # Create new row
         new_row = Row( extract_table )
         
-        for row_index in self._dataframe.itertuples():
+        for row_index in tqdm(self._dataframe.itertuples(), desc='processing table'):
 
             for col_index, col_entry in enumerate(row_index):
                 if add_index:
@@ -155,7 +161,6 @@ class pandleau( object ):
                     pandleau.determine_entry_value(new_row, (col_index+add_index-1), col_entry, column_type)
                 
             tableau_table.insert( new_row )
-            
     
     @staticmethod
     def determine_entry_value(new_row, entry_index, entry, column_type):

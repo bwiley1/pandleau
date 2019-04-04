@@ -8,6 +8,7 @@ setup(name='pandleau',
       description='A quick and easy way to convert a Pandas DataFrame to a Tableau extract.',
       long_description=open('README.md').read(),
       install_requires=['pandas','numpy'],
+      extras_require={'dev': ['pytest']},
       author='Benjamin Wiley <bewi7122@colorado.edu>, Zhirui(Jerry) Wang <zw2389@columbia.edu>,'
              'Aaron Wiegel <aawiegel@gmail.com>',
       url='https://github.com/bwiley1/pandleau',
