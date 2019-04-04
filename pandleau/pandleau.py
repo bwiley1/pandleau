@@ -30,6 +30,40 @@ class pandleau( object ):
     Modification to the pandas DataFrame object
     
     '''
+    mapper = {'string': Type.UNICODE_STRING,
+              'bytes': Type.BOOLEAN,
+              'floating': Type.DOUBLE,
+              'integer': Type.INTEGER,
+              'mixed-integer': Type.DOUBLE,  # integers with non-integers
+              'mixed-integer-float': Type.DOUBLE,  # floats and integers
+              'decimal': Type.DOUBLE,
+              'complex': Type.UNICODE_STRING,  # No complex set type
+              'categorical': Type.CHAR_STRING,
+              'boolean': Type.BOOLEAN,
+              'datetime64': Type.DATETIME,
+              'datetime': Type.DATETIME,
+              'date': Type.DATE,
+              'timedelta64': Type.DATETIME,
+              'timedelta': Type.DATETIME,
+              'time': Type.DATETIME,
+              'period': Type.DURATION,
+              'mixed': Type.UNICODE_STRING}
+
+    entry_writer = {Type.SPATIAL: lambda row, entry_index, entry: row.setSpatial(entry_index, entry.encode('utf-8')),
+                    Type.UNICODE_STRING: lambda row, entry_index, entry: row.setString(entry_index, str(entry)),
+                    Type.BOOLEAN: lambda row, entry_index, entry: row.setBoolean(entry_index, entry),
+                    Type.DOUBLE: lambda row, entry_index, entry: row.setDouble(entry_index, entry),
+                    Type.INTEGER: lambda row, entry_index, entry: row.setInteger(entry_index, int(entry)),
+                    Type.CHAR_STRING: lambda row, entry_index, entry: row.setCharString(entry_index, str(entry)),
+                    Type.DATETIME: lambda row, entry_index, entry: row.setDateTime(entry_index, entry.year,
+                                                                                   entry.month, entry.day, entry.hour,
+                                                                                   entry.minute, entry.second,
+                                                                                   entry.microsecond),
+                    Type.DATE: lambda row, entry_index, entry: row.setDate(entry_index, entry.year, entry.month,
+                                                                           entry.day),
+                    Type.DURATION: lambda row, entry_index, entry: row.setDuration(entry_index, entry.day, entry.hour,
+                                                                                   entry.minute,
+                                                                                   entry.second, entry.microsecond)}
     
     @staticmethod
     def data_static_type(column):
@@ -38,30 +72,13 @@ class pandleau( object ):
             @param column is dataframe column
             
             '''
-            mapper = {'string':Type.UNICODE_STRING,
-                      'bytes':Type.BOOLEAN,
-                      'floating':Type.DOUBLE,
-                      'integer':Type.INTEGER,
-                      'mixed-integer':Type.DOUBLE, # integers with non-integers
-                      'mixed-integer-float':Type.DOUBLE,# floats and integers
-                      'decimal':Type.DOUBLE,
-                      'complex':Type.UNICODE_STRING,# No complex set type
-                      'categorical':Type.CHAR_STRING,
-                      'boolean':Type.BOOLEAN,
-                      'datetime64':Type.DATETIME,
-                      'datetime': Type.DATETIME,
-                      'date': Type.DATE,
-                      'timedelta64':Type.DATETIME,
-                      'timedelta':Type.DATETIME,
-                      'time':Type.DATETIME,
-                      'period':Type.DURATION,
-                      'mixed':Type.UNICODE_STRING}
+
             try:
                 # Use pandas api for inferring types for latest versions of pandas, lib method for earlier versions
                 if pandas.__version__ >= '0.21.0':
-            	    return mapper[pandas.api.types.infer_dtype(column.dropna())]
+            	    return pandleau.mapper[pandas.api.types.infer_dtype(column.dropna())]
                 else:
-                    return mapper[pandas.lib.infer_dtype(column.dropna())]
+                    return pandleau.mapper[pandas.lib.infer_dtype(column.dropna())]
             except:
                 raise Exception('Error: Unknown pandas to Tableau data type.')
     
@@ -75,6 +92,10 @@ class pandleau( object ):
         
         # Iniital column types
         self._column_static_type = self._dataframe.apply(lambda x: pandleau.data_static_type(x), axis = 0)
+        self._column_set_function = [
+            pandleau.entry_writer.get(col_type, lambda row, entry_index, _: row.setNull(entry_index))
+            for col_type in
+            self._column_static_type]
 
     def set_spatial(self, column_index, indicator = True):
         '''
@@ -102,22 +123,19 @@ class pandleau( object ):
             else:
                 raise Exception ('Error: could not find column in dataframe.')
 
-    def to_tableau(self, path, tableName='', add_index=False):
+    def to_tableau(self, path, tableName='Extract', add_index=False):
         '''
         Converts a Pandas DataFrame to a Tableau .tde file
         @param path = path to write file
         @param tableName = name of the table in the extract
         
         '''
-        
-        if tableName == '':
-            tableName = 'Extract'
 
         # Delete Extract and debug log is already exist
-        # for file in [path, os.path.dirname(path) + '/debug.log',
-        #              './DataExtract.log', './debug.log']:
-        #     if os.path.isfile(file):
-        #         os.remove(file)
+        for file in [path, os.path.dirname(path) + '/debug.log',
+                     './DataExtract.log', './debug.log']:
+            if os.path.isfile(file):
+                os.remove(file)
 
         # Create Extract and Table
         ExtractAPI.initialize( )
@@ -156,9 +174,16 @@ class pandleau( object ):
                     if col_index == 0:
                         new_row.setInteger(col_index, int( col_entry+1 ) )
                 if col_index != 0:
-                    column_type = self._column_static_type[col_index-1]
+                    column_set_function = self._column_set_function[col_index-1]
 #                    print(new_row, (col_index-2), col_entry, column_type)
-                    pandleau.determine_entry_value(new_row, (col_index+add_index-1), col_entry, column_type)
+                    entry_index = (col_index+add_index-1)
+                    try:
+                        if pandas.isnull(col_entry):
+                            new_row.setNull(entry_index)
+                        else:
+                            column_set_function(new_row, entry_index, col_entry)
+                    except:
+                        new_row.setNull(entry_index)
                 
             tableau_table.insert( new_row )
     
@@ -174,48 +199,11 @@ class pandleau( object ):
         '''
         
         try:
-            if (pandas.isnull(entry)):
+            if pandas.isnull(entry):
                 new_row.setNull(entry_index)
-            elif column_type == Type.SPATIAL:
-                new_row.setSpatial(entry_index, 
-                                  entry.encode('utf-8') )
-            elif column_type == Type.UNICODE_STRING:
-                new_row.setString(entry_index, 
-                                  str(entry) )
-            elif column_type == Type.BOOLEAN:
-                new_row.setBoolean(entry_index, 
-                                   entry)
-            elif column_type == Type.DOUBLE:
-                new_row.setDouble(entry_index, 
-                                  entry)
-            elif column_type == Type.INTEGER:
-                new_row.setInteger(entry_index, 
-                                   int( entry ) )
-            elif column_type == Type.CHAR_STRING:
-                new_row.setCharString(entry_index, 
-                                      str( entry ) )
-            elif column_type == Type.DATETIME:
-                new_row.setDateTime(entry_index,
-                                    entry.year,
-                                    entry.month,
-                                    entry.day,
-                                    entry.hour,
-                                    entry.minute,
-                                    entry.second,
-                                    entry.microsecond)
-            elif column_type == Type.DATE:
-                new_row.setDate(entry_index,
-                                    entry.year,
-                                    entry.month,
-                                    entry.day)
-            elif column_type == Type.DURATION:
-                new_row.setDuration(entry_index,
-                                    entry.day,
-                                    entry.hour,
-                                    entry.minute,
-                                    entry.second,
-                                    entry.microsecond)
             else:
-                new_row.setNull(entry_index)
+                pandleau.entry_writer.get(column_type, lambda row, entry_index, _: row.setNull(entry_index))\
+                    (new_row, entry_index, entry)
+
         except:
             new_row.setNull(entry_index)
