@@ -172,10 +172,12 @@ class pandleau( object ):
         '''
         # Create new row
         new_row = Row( extract_table )
-        
+        cols_range = range(len(self._dataframe.columns))
+
         for row_index in tqdm(self._dataframe.itertuples(index=add_index), desc='processing table'):
 
-            for col_index, col_entry in enumerate(row_index):
+            for col_index in cols_range:
+                col_entry = row_index[col_index]
                 if col_index == 0 and add_index:
                     new_row.setInteger(col_index, col_entry)
                 else:
