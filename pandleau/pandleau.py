@@ -76,7 +76,7 @@ class pandleau( object ):
             try:
                 # Use pandas api for inferring types for latest versions of pandas, lib method for earlier versions
                 if pandas.__version__ >= '0.21.0':
-            	    return pandleau.mapper[pandas.api.types.infer_dtype(column.dropna())]
+                    return pandleau.mapper[pandas.api.types.infer_dtype(column.dropna())]
                 else:
                     return pandleau.mapper[pandas.lib.infer_dtype(column.dropna())]
             except:
@@ -123,12 +123,13 @@ class pandleau( object ):
             else:
                 raise Exception ('Error: could not find column in dataframe.')
 
-    def to_tableau(self, path, tableName='Extract', add_index=False):
+    def to_tableau(self, path, table_name='Extract', add_index=False):
         '''
         Converts a Pandas DataFrame to a Tableau .tde file
         @param path = path to write file
-        @param tableName = name of the table in the extract
-        
+        @param table_name = name of the table in the extract
+        @param add_index = adds incrementing integer index before dataframe columns
+
         '''
 
         # Delete Extract and debug log is already exist
@@ -155,7 +156,7 @@ class pandleau( object ):
             table_def.addColumn( col_name, self._column_static_type[col_index] )
         
         # Create table
-        new_table = new_extract.addTable(tableName, table_def)
+        new_table = new_extract.addTable(table_name, table_def)
         
         # Set Column values
         self.set_column_values( new_table, table_def, add_index )
