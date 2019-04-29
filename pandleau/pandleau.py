@@ -86,15 +86,11 @@ class pandleau(object):
         if dataframe.__class__.__name__ != 'DataFrame':
             raise Exception('Error: object is not a pandas DataFrame.')
 
-        self._dataframe = dataframe.reset_index()
+        self._dataframe = dataframe
         self._column_names = list(self._dataframe.columns)
 
         # Initial column types
         self._column_static_type = self._dataframe.apply(lambda x: pandleau.data_static_type(x), axis=0)
-        self._column_set_function = [
-            pandleau.entry_writer.get(col_type, lambda row, entry_index, _: row.setNull(entry_index))
-            for col_type in
-            self._column_static_type]
 
     def set_spatial(self, column_index, indicator=True):
         """
@@ -171,24 +167,31 @@ class pandleau(object):
         """
         # Create new row
         new_row = Row(extract_table)
-        cols_range = range(len(self._dataframe.columns) + add_index)
+        cols_range = range(len(self._dataframe.columns))
+        column_set_functions = [
+            pandleau.entry_writer.get(col_type, lambda row, entry_index, _: row.setNull(entry_index))
+            for col_type in
+            self._column_static_type]
+        i = 0
 
-        for row_index in tqdm(self._dataframe.itertuples(index=add_index), desc='processing table'):
+        for row_index in tqdm(self._dataframe.itertuples(index=False), desc='processing table'):
+
+            if add_index:
+                new_row.setInteger(0, i)
+                i += 1
 
             for col_index in cols_range:
+                col_index_corrected = col_index+add_index
                 col_entry = row_index[col_index]
-                if col_index == 0 and add_index:
-                    new_row.setInteger(col_index, col_entry)
-                else:
-                    column_set_function = self._column_set_function[col_index - add_index]
+                column_set_function = column_set_functions[col_index]
 
-                    try:
-                        if pandas.isnull(col_entry):
-                            new_row.setNull(col_index)
-                        else:
-                            column_set_function(new_row, col_index, col_entry)
-                    except:
-                        new_row.setNull(col_index)
+                try:
+                    if pandas.isnull(col_entry):
+                        new_row.setNull(col_index_corrected)
+                    else:
+                        column_set_function(new_row, col_index_corrected, col_entry)
+                except:
+                    new_row.setNull(col_index_corrected)
 
             tableau_table.insert(new_row)
 
