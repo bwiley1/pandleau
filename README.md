@@ -6,13 +6,13 @@ A quick and easy way to convert a Pandas DataFrame to a Tableau .tde or .hyper e
 
 ### Prerequisites
 
- - If you want to output as a .tde format, you'll need to install TableauSDK directly from Tableau's site: https://onlinehelp.tableau.com/current/api/sdk/en-us/help.htm#SDK/tableau_sdk_installing.htm%3FTocPath%3D_____3 . 
-  - If you want to output as a .hyper format, you'll need to install Extract API 2.0 directly from Tableau's site: https://onlinehelp.tableau.com/current/api/extract_api/en-us/help.htm#Extract/extract_api_installing.htm%3FTocPath%3D_____3 . 
-  - Although Tableau's site claims Python 3 is not supported, this module is tested to work fully functional on Python 3.6
+ - If you want to output as a .tde format, you'll need to install TableauSDK directly from Tableau's site [here]( https://onlinehelp.tableau.com/current/api/sdk/en-us/help.htm#SDK/tableau_sdk_installing.htm%3FTocPath%3D_____3).
+  - If you want to output as a .hyper format, you'll need to install Extract API 2.0 directly from Tableau's site [here](https://onlinehelp.tableau.com/current/api/extract_api/en-us/help.htm#Extract/extract_api_installing.htm%3FTocPath%3D_____3).
+  - Although Tableau's site claims Python 3 is not supported, this module is tested to work fully functional on Python 3.6.
 
 ### Installing
 
-Once installing TableauSDK is done, download this repository, navigate to your downloads file and run the following in cmd:  
+Once installing TableauSDK is done, download this repository, navigate to your downloads file and run the following in cmd or terminal:  
 ```bash
 python -m setup.py install
 ```
@@ -54,6 +54,10 @@ df_tableau.set_spatial('SpatialDest', indicator=True)
 df_tableau.to_tableau('test.hyper', add_index=False)
 
 ```
+
+## Tableau Server/Online Automation
+
+Eric Chan ([erickhchan](https://github.com/erickhchan)) wrote a really cool blog post on using Python to blend and clean data before pushing it to Tableau Online (which is a SaaS version of Tableau Server). This is a great way to learn how to automate the data refresh process with Tableau Server Client and Pandleau. Check out his blog post here: https://www.erickhchan.com/data/2019/03/18/python-tableau-server.html
 
 ## Authors
 
