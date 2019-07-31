@@ -65,6 +65,7 @@ Eric Chan ([erickhchan](https://github.com/erickhchan)) wrote a really cool blog
 * **Zhirui(Jerry) Wang**  - [zhiruiwang](https://github.com/zhiruiwang)
 * **Aaron Wiegel** - [aawiegel](https://github.com/aawiegel)
 * **Pointy Shiny Burning** - [PointyShinyBurning](https://github.com/pointyshinyburning)
+* **Harrison** - [harrison-h](https://github.com/harrison-h)
 
 ## Related Project
 
