@@ -127,8 +127,8 @@ class pandleau(object):
 
         """
 
-        # Delete Extract and debug log is already exist
-        for file in [path, os.path.dirname(path) + '/debug.log',
+        # Delete debug log if already exists
+        for file in [os.path.dirname(path) + '/debug.log',
                      './DataExtract.log', './debug.log']:
             if os.path.isfile(file):
                 os.remove(file)
@@ -136,8 +136,30 @@ class pandleau(object):
         # Create Extract and Table
         ExtractAPI.initialize()
         new_extract = Extract(path)
-        table_def = TableDefinition()
 
+        if not new_extract.hasTable(table_name):
+            print('Table \'{}\' does not exist in extract {}, creating.'.format(table_name, path))
+            self.set_table_structure(new_extract, table_name, add_index)
+
+        new_table = new_extract.openTable(table_name)
+        table_def = new_table.getTableDefinition()
+
+        # Set Column values
+        self.set_column_values(new_table, table_def, add_index)
+
+        # Close extract
+        new_extract.close()
+        ExtractAPI.cleanup()
+
+    def set_table_structure(self, new_extract, table_name, add_index=False):
+        """
+        Checks if the provided table name exists in the extract, and if not, creates it.
+        @param new_extract = extract that's been created
+        @param table_name = name of the table in the extract
+        @param add_index = adds incrementing integer index before dataframe columns
+        """
+
+        table_def = TableDefinition()
         # Set columns in Tableau
         if add_index:
             index_col = 'index'
@@ -146,19 +168,10 @@ class pandleau(object):
                 index_col = '%s_%s' % (index_col, suffix)
                 suffix += 1
             table_def.addColumn(index_col, Type.INTEGER)
-
         for col_index, col_name in enumerate(self._dataframe):
             table_def.addColumn(col_name, self._column_static_type[col_index])
-
         # Create table
-        new_table = new_extract.addTable(table_name, table_def)
-
-        # Set Column values
-        self.set_column_values(new_table, table_def, add_index)
-
-        # Close extract
-        new_extract.close()
-        ExtractAPI.cleanup()
+        new_extract.addTable(table_name, table_def)
 
     def set_column_values(self, tableau_table, extract_table, add_index):
         """
