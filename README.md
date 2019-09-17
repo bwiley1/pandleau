@@ -8,7 +8,7 @@ A quick and easy way to convert a Pandas DataFrame to a Tableau .tde or .hyper e
 
  - If you want to output as a .tde format, you'll need to install TableauSDK directly from Tableau's site [here]( https://onlinehelp.tableau.com/current/api/sdk/en-us/help.htm#SDK/tableau_sdk_installing.htm%3FTocPath%3D_____3).
   - If you want to output as a .hyper format, you'll need to install Extract API 2.0 directly from Tableau's site [here](https://onlinehelp.tableau.com/current/api/extract_api/en-us/help.htm#Extract/extract_api_installing.htm%3FTocPath%3D_____3).
-  - Although Tableau's site claims Python 3 is not supported, this module is tested to work fully functional on Python 3.6.
+  - Although Tableau's site claims Python 3 is not supported, this module has been tested to work fully functionally on Python 3.6.
 
 ### Installing
 
