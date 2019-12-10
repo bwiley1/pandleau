@@ -6,6 +6,7 @@
 """
 
 from __future__ import print_function
+from glob import glob
 import pandas
 from tableausdk import *
 from tqdm import tqdm
@@ -126,10 +127,12 @@ class pandleau(object):
         @param add_index = adds incrementing integer index before dataframe columns
 
         """
+        
+        # Delete dataextract log and hyper_db temp files if already exists
+        files = (glob('DataExtract*.log') + glob('hyper_db_*')
+                 + [os.path.dirname(path) + '/debug.log', './DataExtract.log', './debug.log'])
 
-        # Delete debug log if already exists
-        for file in [os.path.dirname(path) + '/debug.log',
-                     './DataExtract.log', './debug.log']:
+        for file in files:
             if os.path.isfile(file):
                 os.remove(file)
 
