@@ -63,8 +63,10 @@ Eric Chan ([erickhchan](https://github.com/erickhchan)) wrote a really cool blog
 
 * **Benjamin Wiley** - [jamin4lyfe](https://github.com/bwiley1)
 * **Zhirui(Jerry) Wang**  - [zhiruiwang](https://github.com/zhiruiwang)
-* **Aaron Wiegel** - [aawiegel](https://github.com/aawiegel)
 * **Pointy Shiny Burning** - [PointyShinyBurning](https://github.com/pointyshinyburning)
+* **Aaron Wiegel** - [aawiegel](https://github.com/aawiegel)
+* **Ricky Schools** - [rickyschools](https://github.com/rickyschools)
+* **Kene Udeh** - [kudeh](https://github.com/kudeh)
 * **Harrison** - [harrison-h](https://github.com/harrison-h)
 
 ## Related Project
